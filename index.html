@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
+  <title>びあけん対策ドリル</title>
+  <meta name="description" content="日本ビール検定（びあけん）対策の4択クイズアプリ" />
+  <meta name="theme-color" content="#7a4a12" />
+
+  <!-- iPhone ホーム画面追加（フルスクリーン化） -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="びあけんドリル" />
+
+  <link rel="manifest" href="manifest.webmanifest" />
+  <!-- アイコン（インラインSVGデータURIで完結。別ファイル不要） -->
+  <link rel="apple-touch-icon" href="icon-180.png" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23c8860d'/%3E%3Cpath d='M20 16h20l-2 30a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6z' fill='%23fff3d6'/%3E%3Crect x='20' y='16' width='20' height='7' rx='2' fill='%23fff'/%3E%3C/svg%3E" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+
+    <!-- ===== ホーム画面 ===== -->
+    <section id="screen-home" class="screen active">
+      <header class="hero">
+        <div class="hero-mug">🍺</div>
+        <h1>びあけん対策ドリル</h1>
+        <p class="sub">日本ビール検定 4択クイズ</p>
+      </header>
+
+      <div class="stats card">
+        <div class="stat">
+          <span class="stat-num" id="home-total-q">–</span>
+          <span class="stat-label">収録問題</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num" id="home-answered">–</span>
+          <span class="stat-label">解答数</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num" id="home-rate">–</span>
+          <span class="stat-label">正答率</span>
+        </div>
+      </div>
+
+      <div class="filter card">
+        <label for="cat-select">分野でしぼる</label>
+        <select id="cat-select"></select>
+        <label class="switch-row">
+          <input type="checkbox" id="shuffle-toggle" checked />
+          <span>問題をシャッフルする</span>
+        </label>
+      </div>
+
+      <button class="btn btn-primary" id="btn-start">クイズを始める</button>
+      <button class="btn btn-review" id="btn-review">
+        復習モード（間違えた問題）<span class="badge" id="review-count">0</span>
+      </button>
+      <button class="btn btn-ghost" id="btn-reset">記録をリセット</button>
+
+      <p class="note">※間違えた問題はこの端末に保存され、復習モードで出題されます。正解すると復習リストから外れます。</p>
+    </section>
+
+    <!-- ===== クイズ画面 ===== -->
+    <section id="screen-quiz" class="screen">
+      <div class="quiz-topbar">
+        <button class="link-btn" id="btn-quit">✕ やめる</button>
+        <div class="progress-wrap">
+          <div class="progress-bar"><span id="progress-fill"></span></div>
+          <span class="progress-text" id="progress-text">1 / 10</span>
+        </div>
+      </div>
+
+      <div class="qmeta">
+        <span class="chip" id="q-category">原料</span>
+        <span class="chip chip-level" id="q-level">3級</span>
+        <span class="chip chip-mode" id="q-mode" hidden>復習</span>
+      </div>
+
+      <div class="question card" id="q-text">問題文</div>
+
+      <div class="choices" id="choices"></div>
+
+      <div class="feedback card" id="feedback" hidden>
+        <div class="feedback-head" id="feedback-head">正解！</div>
+        <div class="feedback-exp" id="feedback-exp"></div>
+      </div>
+
+      <button class="btn btn-primary" id="btn-next" hidden>次の問題へ</button>
+    </section>
+
+    <!-- ===== 結果画面 ===== -->
+    <section id="screen-result" class="screen">
+      <header class="hero">
+        <div class="hero-mug" id="result-emoji">🎉</div>
+        <h1>おつかれさまでした</h1>
+      </header>
+
+      <div class="result-score card">
+        <div class="big-rate"><span id="result-rate">0%</span></div>
+        <div class="result-detail">
+          <span id="result-correct">0</span> / <span id="result-count">0</span> 問 正解
+        </div>
+      </div>
+
+      <div id="result-review-note" class="note" hidden></div>
+
+      <button class="btn btn-primary" id="btn-again">もう一度</button>
+      <button class="btn btn-review" id="btn-result-review" hidden>間違えた問題を復習</button>
+      <button class="btn btn-ghost" id="btn-home">ホームに戻る</button>
+    </section>
+
+  </div>
+
+  <!-- データ → ロジック の順で読み込む -->
+  <script src="questions.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

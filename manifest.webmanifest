@@ -1,0 +1,20 @@
+{
+  "name": "びあけん対策ドリル",
+  "short_name": "びあけんドリル",
+  "description": "日本ビール検定（びあけん）対策の4択クイズアプリ",
+  "lang": "ja",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#1c140b",
+  "theme_color": "#7a4a12",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%23c8860d'/%3E%3Cpath d='M160 128h160l-16 232a44 44 0 0 1-44 41h-40a44 44 0 0 1-44-41z' fill='%23fff3d6'/%3E%3Crect x='160' y='128' width='160' height='52' rx='14' fill='%23ffffff'/%3E%3Crect x='320' y='168' width='44' height='150' rx='22' fill='none' stroke='%23fff3d6' stroke-width='22'/%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
