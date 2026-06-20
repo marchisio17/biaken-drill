@@ -71,7 +71,7 @@ body {
 
 /* ---- フィルタ ---- */
 .filter label { display: block; font-size: 14px; color: var(--text-dim); margin-bottom: 6px; }
-#cat-select {
+#cat-select, #level-select {
   width: 100%; padding: 12px; font-size: 16px; border-radius: 12px;
   background: var(--bg); color: var(--text); border: 1px solid var(--line);
   margin-bottom: 14px; -webkit-appearance: none; appearance: none;

@@ -88,6 +88,21 @@
     sel.innerHTML = html;
   }
 
+  function buildLevelOptions() {
+    var sel = $("level-select");
+    var levels = [];
+    for (var i = 0; i < ALL.length; i++) {
+      var lv = ALL[i].level;
+      if (lv && levels.indexOf(lv) === -1) levels.push(lv);
+    }
+    levels.sort(function (a, b) { return b - a; }); // 3級→2級→1級 の順
+    var html = '<option value="__all__">すべての級</option>';
+    for (var k = 0; k < levels.length; k++) {
+      html += '<option value="' + levels[k] + '">' + levels[k] + "級</option>";
+    }
+    sel.innerHTML = html;
+  }
+
   function refreshHome() {
     $("home-total-q").textContent = ALL.length;
     var stats = getStats();
@@ -105,8 +120,13 @@
   // =====================================================================
   function startQuiz() {
     var cat = $("cat-select").value;
-    var pool = ALL.filter(function (q) { return cat === "__all__" || q.category === cat; });
-    if (pool.length === 0) { alert("この分野には問題がありません。"); return; }
+    var lvVal = $("level-select").value;
+    var pool = ALL.filter(function (q) {
+      var okCat = cat === "__all__" || q.category === cat;
+      var okLv = lvVal === "__all__" || String(q.level) === lvVal;
+      return okCat && okLv;
+    });
+    if (pool.length === 0) { alert("この条件に合う問題がありません。級や分野を変えてみてください。"); return; }
     if ($("shuffle-toggle").checked) pool = shuffle(pool);
 
     session.queue = pool;
@@ -293,6 +313,7 @@
       return;
     }
 
+    buildLevelOptions();
     buildCategoryOptions();
     refreshHome();
 
