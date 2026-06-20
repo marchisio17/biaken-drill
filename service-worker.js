@@ -2,7 +2,7 @@
  *  Service Worker  — オフライン動作用のキャッシュ
  *  アプリのファイルを更新したら CACHE_VERSION の数字を上げてください。
  * ===================================================================== */
-var CACHE_VERSION = "biaken-v3";
+var CACHE_VERSION = "biaken-v4";
 var ASSETS = [
   "./",
   "./index.html",
