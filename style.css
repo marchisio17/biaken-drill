@@ -71,7 +71,7 @@ body {
 
 /* ---- フィルタ ---- */
 .filter label { display: block; font-size: 14px; color: var(--text-dim); margin-bottom: 6px; }
-#cat-select, #level-select {
+#cat-select, #level-select, #chapter-select {
   width: 100%; padding: 12px; font-size: 16px; border-radius: 12px;
   background: var(--bg); color: var(--text); border: 1px solid var(--line);
   margin-bottom: 14px; -webkit-appearance: none; appearance: none;
@@ -112,6 +112,7 @@ body {
 .qmeta { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
 .chip { font-size: 12px; padding: 4px 10px; border-radius: 20px; background: var(--card-2); color: var(--text-dim); border: 1px solid var(--line); }
 .chip-level { color: var(--beer); }
+.chip-chapter { color: var(--foam); border-color: var(--beer); }
 .chip-mode { background: var(--wrong); color: #fff; border-color: transparent; }
 
 /* ---- 問題文 ---- */

@@ -46,10 +46,10 @@
       </div>
 
       <div class="filter card">
+        <label for="chapter-select">章でしぼる</label>
+        <select id="chapter-select"></select>
         <label for="level-select">級でしぼる</label>
         <select id="level-select"></select>
-        <label for="cat-select">分野でしぼる</label>
-        <select id="cat-select"></select>
         <label class="switch-row">
           <input type="checkbox" id="shuffle-toggle" checked />
           <span>問題をシャッフルする</span>
@@ -77,6 +77,7 @@
       </div>
 
       <div class="qmeta">
+        <span class="chip chip-chapter" id="q-chapter">Ch2</span>
         <span class="chip" id="q-category">原料</span>
         <span class="chip chip-level" id="q-level">3級</span>
         <span class="chip chip-mode" id="q-mode" hidden>復習</span>

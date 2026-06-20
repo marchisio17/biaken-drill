@@ -7,7 +7,24 @@
   "use strict";
 
   // ---- アプリのバージョン（更新したらここを上げる） ----
-  var APP_VERSION = "1.1.0";
+  var APP_VERSION = "1.2.1";
+
+  // ---- テキストの章タイトル（目次に対応） ----
+  var CHAPTERS = {
+    1: "ビールとは",
+    2: "ビールの原料",
+    3: "ビールの製造工程",
+    4: "ビールの世界史",
+    5: "ビールの日本史",
+    6: "日本の酒税法とビール",
+    7: "ビール文化と触れ合う場",
+    8: "ビール文化を支える団体",
+    9: "ビールの消費動向",
+    10: "多様なビアスタイル",
+    11: "ビールのおいしさ",
+    12: "ビールをさらにおいしく",
+    13: "アルコールと健康"
+  };
 
   // ---- データ取得（questions.js の QUESTIONS） ----
   var ALL = (typeof QUESTIONS !== "undefined" && Array.isArray(QUESTIONS)) ? QUESTIONS.slice() : [];
@@ -77,16 +94,19 @@
   // =====================================================================
   //  ホーム画面
   // =====================================================================
-  function buildCategoryOptions() {
-    var sel = $("cat-select");
-    var cats = [];
+  function buildChapterOptions() {
+    var sel = $("chapter-select");
+    var chs = [];
     for (var i = 0; i < ALL.length; i++) {
-      var c = ALL[i].category || "その他";
-      if (cats.indexOf(c) === -1) cats.push(c);
+      var c = ALL[i].chapter;
+      if (c && chs.indexOf(c) === -1) chs.push(c);
     }
-    var html = '<option value="__all__">すべての分野</option>';
-    for (var k = 0; k < cats.length; k++) {
-      html += '<option value="' + cats[k] + '">' + cats[k] + "</option>";
+    chs.sort(function (a, b) { return a - b; }); // 章番号の小さい順
+    var html = '<option value="__all__">すべての章</option>';
+    for (var k = 0; k < chs.length; k++) {
+      var n = chs[k];
+      var title = CHAPTERS[n] ? "Ch" + n + " " + CHAPTERS[n] : "Ch" + n;
+      html += '<option value="' + n + '">' + title + "</option>";
     }
     sel.innerHTML = html;
   }
@@ -122,14 +142,14 @@
   //  クイズ開始
   // =====================================================================
   function startQuiz() {
-    var cat = $("cat-select").value;
+    var chVal = $("chapter-select").value;
     var lvVal = $("level-select").value;
     var pool = ALL.filter(function (q) {
-      var okCat = cat === "__all__" || q.category === cat;
+      var okCh = chVal === "__all__" || String(q.chapter) === chVal;
       var okLv = lvVal === "__all__" || String(q.level) === lvVal;
-      return okCat && okLv;
+      return okCh && okLv;
     });
-    if (pool.length === 0) { alert("この条件に合う問題がありません。級や分野を変えてみてください。"); return; }
+    if (pool.length === 0) { alert("この条件に合う問題がありません。章や級を変えてみてください。"); return; }
     if ($("shuffle-toggle").checked) pool = shuffle(pool);
 
     session.queue = pool;
@@ -172,6 +192,8 @@
     $("progress-fill").style.width = ((session.index) / total * 100) + "%";
 
     // メタ
+    $("q-chapter").textContent = q.chapter ? "Ch" + q.chapter : "";
+    $("q-chapter").hidden = !q.chapter;
     $("q-category").textContent = q.category || "その他";
     $("q-level").textContent = levelLabel(q.level);
     $("q-mode").hidden = !session.isReview;
@@ -316,8 +338,8 @@
       return;
     }
 
+    buildChapterOptions();
     buildLevelOptions();
-    buildCategoryOptions();
     refreshHome();
 
     // バージョン表示（v○○○ ・ 全△問）

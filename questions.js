@@ -7,6 +7,7 @@
  *  ▼ 1問のフォーマット
  *    {
  *      id: 14,                       // 一意の番号（既存とかぶらない数字）
+ *      chapter: 2,                    // テキストの章番号（1〜13）下の対応表を参照
  *      category: "原料",             // 分野。原料/製法/スタイル/歴史/楽しみ方/その他
  *      level: 3,                     // びあけんの級の目安（3=3級, 2=2級, 1=1級）
  *      question: "問題文をここに書く",
@@ -20,11 +21,19 @@
  *    - 公式テキストの文章はそのまま転載しないこと（著作権配慮）。
  *      一般的な事実をもとに自分の言葉で作問する。
  *    - 各問の最後のカンマ「,」を消さないよう注意。
+ *
+ *  ▼ chapter（テキスト目次に対応）
+ *    1=ビールとは / 2=ビールの原料 / 3=ビールの製造工程
+ *    4=ビールの世界史 / 5=ビールの日本史 / 6=日本の酒税法とビール
+ *    7=ビール文化と触れ合う場 / 8=ビール文化を支える団体 / 9=ビールの消費動向
+ *    10=多様なビアスタイル / 11=ビールのおいしさ / 12=ビールをさらにおいしく
+ *    13=アルコールと健康
  * ===================================================================== */
 
 const QUESTIONS = [
   {
     id: 1,
+    chapter: 2,
     category: "原料",
     level: 3,
     question: "ビールの主原料のうち、麦芽（モルト）の元になる穀物として最も一般的なものはどれ？",
@@ -34,6 +43,7 @@ const QUESTIONS = [
   },
   {
     id: 2,
+    chapter: 2,
     category: "原料",
     level: 3,
     question: "ビールに苦味と香り、そして防腐効果をもたらす植物はどれ？",
@@ -43,6 +53,7 @@ const QUESTIONS = [
   },
   {
     id: 3,
+    chapter: 3,
     category: "製法",
     level: 3,
     question: "麦芽を糖化させた麦汁を、酵母がアルコールと炭酸ガスに変える工程を何という？",
@@ -52,6 +63,7 @@ const QUESTIONS = [
   },
   {
     id: 4,
+    chapter: 3,
     category: "製法",
     level: 2,
     question: "ラガービールに使われる酵母の発酵方式として正しいものはどれ？",
@@ -61,6 +73,7 @@ const QUESTIONS = [
   },
   {
     id: 5,
+    chapter: 10,
     category: "スタイル",
     level: 3,
     question: "淡い黄金色で爽快なのどごしが特徴の、チェコ・ピルゼン発祥のラガースタイルはどれ？",
@@ -70,6 +83,7 @@ const QUESTIONS = [
   },
   {
     id: 6,
+    chapter: 10,
     category: "スタイル",
     level: 3,
     question: "ローストした大麦・麦芽を使い、黒色でコーヒーのような香ばしさを持つエールはどれ？",
@@ -79,6 +93,7 @@ const QUESTIONS = [
   },
   {
     id: 7,
+    chapter: 10,
     category: "スタイル",
     level: 2,
     question: "小麦麦芽を多く使い、バナナやクローブのような香りが出やすいドイツ発祥の白ビールはどれ？",
@@ -88,6 +103,7 @@ const QUESTIONS = [
   },
   {
     id: 8,
+    chapter: 10,
     category: "スタイル",
     level: 2,
     question: "ホップを大量に使い、強い苦味と華やかな香りを特徴とするビアスタイルの略称「IPA」の正式名称はどれ？",
@@ -97,6 +113,7 @@ const QUESTIONS = [
   },
   {
     id: 9,
+    chapter: 4,
     category: "歴史",
     level: 2,
     question: "1516年にドイツ（バイエルン）で定められた、ビールの原料を麦芽・ホップ・水に限るとした法は何と呼ばれる？",
@@ -106,6 +123,7 @@ const QUESTIONS = [
   },
   {
     id: 10,
+    chapter: 5,
     category: "歴史",
     level: 2,
     question: "日本で酒税法が改正され、地ビール（クラフトビール）ブームのきっかけとなった製造免許の規制緩和が行われたのはいつ頃？",
@@ -115,6 +133,7 @@ const QUESTIONS = [
   },
   {
     id: 11,
+    chapter: 12,
     category: "楽しみ方",
     level: 3,
     question: "一般に、ピルスナーなどすっきりした淡色ラガーをおいしく飲むのに適した温度帯はどれ？",
@@ -124,6 +143,7 @@ const QUESTIONS = [
   },
   {
     id: 12,
+    chapter: 12,
     category: "楽しみ方",
     level: 3,
     question: "ビールを注いだときにできる泡の主な役割として、最も適切なものはどれ？",
@@ -133,6 +153,7 @@ const QUESTIONS = [
   },
   {
     id: 13,
+    chapter: 2,
     category: "原料",
     level: 2,
     question: "ビールの仕込みで「水」が重要とされる理由として、最も適切なものはどれ？",
@@ -147,6 +168,7 @@ const QUESTIONS = [
   },
   {
     id: 14,
+    chapter: 3,
     category: "製法",
     level: 2,
     question: "麦芽のデンプンを酵素の力で糖に分解する「糖化」を主に担う、麦芽由来の成分はどれ？",
@@ -156,6 +178,7 @@ const QUESTIONS = [
   },
   {
     id: 15,
+    chapter: 2,
     category: "原料",
     level: 3,
     question: "麦芽を焙煎機（ロースター）で焙煎し、色や香ばしさを強めた麦芽を何という？",
@@ -165,6 +188,7 @@ const QUESTIONS = [
   },
   {
     id: 16,
+    chapter: 2,
     category: "原料",
     level: 3,
     question: "「チョコレート麦芽」の説明として正しいものはどれ？",
@@ -174,6 +198,7 @@ const QUESTIONS = [
   },
   {
     id: 17,
+    chapter: 2,
     category: "原料",
     level: 3,
     question: "「クリスタル麦芽（キャラメル麦芽）」の分類として正しいものはどれ？",
@@ -183,6 +208,7 @@ const QUESTIONS = [
   },
   {
     id: 18,
+    chapter: 1,
     category: "製法",
     level: 3,
     question: "お酒を製造方法で分類したとき、ビールはどれに当てはまる？",
@@ -192,6 +218,7 @@ const QUESTIONS = [
   },
   {
     id: 19,
+    chapter: 1,
     category: "スタイル",
     level: 3,
     question: "日本の大手メーカーの淡色ビール（いわゆるラガー系）の多くが該当するビアスタイルはどれ？",
@@ -201,6 +228,7 @@ const QUESTIONS = [
   },
   {
     id: 20,
+    chapter: 1,
     category: "製法",
     level: 3,
     question: "日本の酒税法上のビールの定義で、麦芽・ホップ・水を原料として『◯◯させたもの』の◯◯に入る語は？",
@@ -210,6 +238,7 @@ const QUESTIONS = [
   },
   {
     id: 21,
+    chapter: 2,
     category: "原料",
     level: 3,
     question: "ビールの原料『モルト（malt）』の日本語訳として正しいものは？",
@@ -219,6 +248,7 @@ const QUESTIONS = [
   },
   {
     id: 22,
+    chapter: 2,
     category: "原料",
     level: 3,
     question: "ビール醸造に主に使われる大麦の種類はどれ？",
@@ -228,6 +258,7 @@ const QUESTIONS = [
   },
   {
     id: 23,
+    chapter: 2,
     category: "原料",
     level: 2,
     question: "大麦の構造のうち、デンプンを分解する酵素が最も多くつくられる部分はどこ？",
@@ -237,6 +268,7 @@ const QUESTIONS = [
   },
   {
     id: 24,
+    chapter: 2,
     category: "歴史",
     level: 2,
     question: "大麦の収穫期を表す季語『麦秋（ばくしゅう）』が指す季節はいつ？",
@@ -246,6 +278,7 @@ const QUESTIONS = [
   },
   {
     id: 25,
+    chapter: 2,
     category: "原料",
     level: 3,
     question: "ビール特有の苦味や香りのもととなる樹脂・精油を含む、ホップの毬花（まりばな）の中の黄色い粒状の部分を何という？",
@@ -255,6 +288,7 @@ const QUESTIONS = [
   },
   {
     id: 26,
+    chapter: 2,
     category: "原料",
     level: 3,
     question: "『マグナム』『ナゲット』などの、主に苦味づけに使われるホップは何と呼ばれる区分？",
@@ -264,6 +298,7 @@ const QUESTIONS = [
   },
   {
     id: 27,
+    chapter: 2,
     category: "原料",
     level: 2,
     question: "グレープフルーツやライチのような強い柑橘系の香りで人気の、アメリカ産ホップ品種はどれ？",
@@ -273,6 +308,7 @@ const QUESTIONS = [
   },
   {
     id: 28,
+    chapter: 2,
     category: "原料",
     level: 2,
     question: "ホップの一般的な収穫方法として正しいものはどれ？",
@@ -282,6 +318,7 @@ const QUESTIONS = [
   },
   {
     id: 29,
+    chapter: 2,
     category: "原料",
     level: 3,
     question: "ビールの仕込みに適するよう水の硬度などを調整することを、醸造の世界で何という？",
@@ -291,6 +328,7 @@ const QUESTIONS = [
   },
   {
     id: 30,
+    chapter: 2,
     category: "原料",
     level: 2,
     question: "次のビール産地のうち、ミュンヘン（ドイツ）よりも硬度の高い（硬水の）産地はどれ？",
@@ -300,6 +338,7 @@ const QUESTIONS = [
   },
   {
     id: 31,
+    chapter: 2,
     category: "原料",
     level: 2,
     question: "ビールに副原料を使う目的として、当てはまらないものはどれ？",
@@ -309,6 +348,7 @@ const QUESTIONS = [
   },
   {
     id: 32,
+    chapter: 2,
     category: "原料",
     level: 3,
     question: "日本の酒税法上、ビールの着色料として使用が認められているものはどれ？",
@@ -318,7 +358,8 @@ const QUESTIONS = [
   },
   {
     id: 33,
-    category: "歴史",
+    chapter: 2,
+    category: "原料",
     level: 3,
     question: "2018年の酒税法改正でビールの副原料として新たに認められるようになったものはどれ？",
     choices: ["果実", "米", "とうもろこし", "こうりゃん"],
@@ -327,6 +368,7 @@ const QUESTIONS = [
   },
   {
     id: 34,
+    chapter: 3,
     category: "製法",
     level: 3,
     question: "ビールの発酵で、糖をアルコールと炭酸ガスに変える働きをするものはどれ？",
@@ -336,6 +378,7 @@ const QUESTIONS = [
   },
   {
     id: 35,
+    chapter: 2,
     category: "原料",
     level: 2,
     question: "ビールに使う酵母についての説明として、誤っているものはどれ？",
@@ -345,6 +388,7 @@ const QUESTIONS = [
   },
   {
     id: 36,
+    chapter: 3,
     category: "製法",
     level: 3,
     question: "上面発酵酵母と下面発酵酵母の性質として正しいものはどれ？",
@@ -354,6 +398,7 @@ const QUESTIONS = [
   },
   {
     id: 37,
+    chapter: 3,
     category: "製法",
     level: 3,
     question: "一般的な下面発酵（ラガー）の発酵期間の目安として最も近いものはどれ？",
@@ -363,6 +408,7 @@ const QUESTIONS = [
   },
   {
     id: 38,
+    chapter: 3,
     category: "製法",
     level: 3,
     question: "ビールの製造工程を正しい順に並べたものはどれ？",
@@ -372,6 +418,7 @@ const QUESTIONS = [
   },
   {
     id: 39,
+    chapter: 3,
     category: "製法",
     level: 2,
     question: "『製麦（せいばく）』の主な目的として正しいものはどれ？",
@@ -381,6 +428,7 @@ const QUESTIONS = [
   },
   {
     id: 40,
+    chapter: 3,
     category: "製法",
     level: 2,
     question: "淡色麦芽をつくる製麦工程を正しい順に並べたものはどれ？",
@@ -390,6 +438,7 @@ const QUESTIONS = [
   },
   {
     id: 41,
+    chapter: 2,
     category: "原料",
     level: 2,
     question: "次の麦芽を色の濃い順（濃→淡）に並べたものはどれ？　A:ウィーン麦芽 B:クリスタル麦芽 C:チョコレート麦芽",
