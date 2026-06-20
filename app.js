@@ -6,6 +6,9 @@
 (function () {
   "use strict";
 
+  // ---- アプリのバージョン（更新したらここを上げる） ----
+  var APP_VERSION = "1.1.0";
+
   // ---- データ取得（questions.js の QUESTIONS） ----
   var ALL = (typeof QUESTIONS !== "undefined" && Array.isArray(QUESTIONS)) ? QUESTIONS.slice() : [];
 
@@ -316,6 +319,10 @@
     buildLevelOptions();
     buildCategoryOptions();
     refreshHome();
+
+    // バージョン表示（v○○○ ・ 全△問）
+    var ver = $("app-version");
+    if (ver) ver.textContent = "v" + APP_VERSION + " ・ 全" + ALL.length + "問";
 
     $("btn-start").addEventListener("click", startQuiz);
     $("btn-review").addEventListener("click", startReview);
