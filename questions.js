@@ -1262,4 +1262,31 @@ const QUESTIONS = [
       "発泡酒は製造免許が不要だから"
     ], answer: 0,
     explanation: "ビール60KLに対し発泡酒は6KL。小さく始められるので、副原料を自由に使えることと合わせてクラフトの入口になっている。免許そのものは当然必要。" },
+  // ===== 2026-10-11 追加 第4弾（id 161〜164）製法の抜け（公式Q22〜24の論点）=====
+  { id: 161, chapter: 3, category: "製法", level: 2,
+    question: "ビール製造の「熟成・貯酒」にあたる英語はどれ？",
+    choices: ["conditioning", "fermentation", "mashing", "milling"], answer: 0,
+    explanation: "conditioning。milling＝麦芽粉砕、mashing＝仕込（糖化）、fermentation＝発酵。工程の順は milling → mashing → fermentation → conditioning。" },
+  { id: 162, chapter: 3, category: "製法", level: 3,
+    question: "ビール製造の工程を英語で古い順に並べるとどうなる？",
+    choices: [
+      "milling → mashing → fermentation → conditioning",
+      "mashing → milling → fermentation → conditioning",
+      "milling → mashing → conditioning → fermentation",
+      "mashing → milling → conditioning → fermentation"
+    ], answer: 0,
+    explanation: "麦芽を砕く（milling）→ 湯と混ぜて糖化（mashing）→ 酵母で発酵（fermentation）→ 低温で熟成（conditioning）。日本語の工程名と対で覚えると、英語で問われても迷わない。" },
+  { id: 163, chapter: 3, category: "製法", level: 3,
+    question: "一般的な下面発酵酵母は、ブドウ糖が最大いくつつながった糖まで取り込める？",
+    choices: ["3個", "1個", "2個", "4個"], answer: 0,
+    explanation: "3個まで（マルトトリオース）。ブドウ糖1個がグルコース、2個がマルトース、3個がマルトトリオース。4個以上のデキストリンは酵母が食べられず残るので、これがボディ（飲みごたえ）になる。" },
+  { id: 164, chapter: 3, category: "製法", level: 1,
+    question: "麦汁中のタンパク質を分解する酵素と、分解されてできるものの組み合わせとして正しいのはどれ？",
+    choices: [
+      "プロテアーゼ ／ ペプチドとアミノ酸",
+      "プロテアーゼ ／ デキストリンとアミノ酸",
+      "α-アミラーゼ ／ ペプチドとアミノ酸",
+      "α-アミラーゼ ／ デキストリンとアミノ酸"
+    ], answer: 0,
+    explanation: "タンパク質を切るのはプロテアーゼで、できるのはペプチドとアミノ酸。α-アミラーゼはデンプンを切る酵素で、できるのはデキストリンなど。「タンパク質＝プロテアーゼ／デンプン＝アミラーゼ」で対にする。マイシェを50℃前後に保つ『タンパク休止』は、この酵素を働かせる時間。" },
 ];
