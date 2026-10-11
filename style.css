@@ -150,6 +150,7 @@ body {
 .feedback.ng { border-color: var(--wrong); }
 .feedback.ng .feedback-head { color: var(--wrong); }
 .feedback-exp { font-size: 15px; color: var(--text); line-height: 1.7; }
+.feedback-src { font-size: 12.5px; color: var(--text-dim); line-height: 1.6; margin: 10px 0 0; }
 
 /* ---- 結果 ---- */
 .result-score { text-align: center; padding: 26px; }

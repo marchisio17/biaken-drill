@@ -7,7 +7,7 @@
   "use strict";
 
   // ---- アプリのバージョン（更新したらここを上げる） ----
-  var APP_VERSION = "1.3.0";
+  var APP_VERSION = "1.4.0";
 
   // ---- テキストの章タイトル（目次に対応） ----
   var CHAPTERS = {
@@ -264,6 +264,8 @@
     fb.className = "feedback card " + (isCorrect ? "ok" : "ng");
     $("feedback-head").textContent = isCorrect ? "正解！ 🍻" : "残念… 正解は " + ["A", "B", "C", "D"][correctIdx] + " です";
     $("feedback-exp").textContent = q.explanation || "";
+    var srcEl = $("feedback-src");
+    if (srcEl) { srcEl.textContent = q.source ? "参考にした論点: " + q.source : ""; srcEl.hidden = !q.source; }
 
     // 進捗バーを進める
     $("progress-fill").style.width = ((session.index + 1) / session.queue.length * 100) + "%";
