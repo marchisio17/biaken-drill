@@ -7,7 +7,7 @@
   "use strict";
 
   // ---- アプリのバージョン（更新したらここを上げる） ----
-  var APP_VERSION = "1.4.0";
+  var APP_VERSION = "1.5.0";
 
   // ---- テキストの章タイトル（目次に対応） ----
   var CHAPTERS = {
@@ -30,8 +30,9 @@
   var ALL = (typeof QUESTIONS !== "undefined" && Array.isArray(QUESTIONS)) ? QUESTIONS.slice() : [];
 
   // ---- localStorage キー ----
-  var LS_WRONG = "biaken_wrong_ids";   // 間違えた問題の id 配列
+  var LS_WRONG = "biaken_wrong_ids";   // いま復習対象の id 配列（正解すると外れる）
   var LS_STATS = "biaken_stats";       // { answered, correct }
+  var LS_HIST  = "biaken_wrong_hist";  // { id: 間違えた累計回数 }。正解しても消さない
 
   // ---- 状態 ----
   var session = {
@@ -60,6 +61,27 @@
   }
   function lsSet(key, value) {
     try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { /* 無視 */ }
+  }
+
+  // 間違えた累計回数。復習リストから外れても残す（弱点を後から辿るため）
+  function getHist() { return lsGet(LS_HIST, {}); }
+  function bumpHist(id) {
+    var h = getHist();
+    h[id] = (h[id] || 0) + 1;
+    lsSet(LS_HIST, h);
+  }
+  function histCount(id) { return getHist()[id] || 0; }
+  function everWrongIds() {
+    var h = getHist(), out = [];
+    for (var k in h) if (h.hasOwnProperty(k) && h[k] > 0) out.push(parseInt(k, 10));
+    return out;
+  }
+
+  // source の「当時の正答率 NN%」を数値で取り出す。無ければ null
+  function sourceRate(q) {
+    if (!q.source) return null;
+    var m = String(q.source).match(/正答率\s*(\d+)\s*%/);
+    return m ? parseInt(m[1], 10) : null;
   }
 
   function getWrongIds() { return lsGet(LS_WRONG, []); }
@@ -111,6 +133,20 @@
     sel.innerHTML = html;
   }
 
+  // しぼり込み。件数は呼ぶたびに数え直す（間違えた問題は増えるため）
+  function buildFocusOptions() {
+    var sel = $("focus-select");
+    if (!sel) return;
+    var keep = sel.value;
+    var hard = ALL.filter(function (q) { var r = sourceRate(q); return r !== null && r < 60; }).length;
+    var ever = everWrongIds().filter(function (id) { return byId(id); }).length;
+    sel.innerHTML =
+      '<option value="__all__">しぼらない（' + ALL.length + '問）</option>' +
+      '<option value="hard">公式で正答率60%未満だった論点（' + hard + '問）</option>' +
+      '<option value="everwrong">一度でも間違えた問題（' + ever + '問）</option>';
+    if (keep) sel.value = keep;   // 選んでいたものは保つ
+  }
+
   function buildLevelOptions() {
     var sel = $("level-select");
     var levels = [];
@@ -133,6 +169,7 @@
     $("home-rate").textContent = stats.answered ? Math.round(stats.correct / stats.answered * 100) + "%" : "—";
     var wrong = getWrongIds().filter(function (id) { return byId(id); });
     $("review-count").textContent = wrong.length;
+    buildFocusOptions();   // 件数が変わるのでホームに戻るたび作り直す
     var rev = $("btn-review");
     if (wrong.length === 0) { rev.classList.add("btn-ghost"); }
     else { rev.classList.remove("btn-ghost"); }
@@ -144,12 +181,20 @@
   function startQuiz() {
     var chVal = $("chapter-select").value;
     var lvVal = $("level-select").value;
+    var focus = $("focus-select") ? $("focus-select").value : "__all__";
     var pool = ALL.filter(function (q) {
       var okCh = chVal === "__all__" || String(q.chapter) === chVal;
       var okLv = lvVal === "__all__" || String(q.level) === lvVal;
-      return okCh && okLv;
+      var okFo = true;
+      if (focus === "hard") {            // 公式で正答率60%未満だった論点
+        var r = sourceRate(q);
+        okFo = (r !== null && r < 60);
+      } else if (focus === "everwrong") { // 一度でも間違えたことがある
+        okFo = histCount(q.id) > 0;
+      }
+      return okCh && okLv && okFo;
     });
-    if (pool.length === 0) { alert("この条件に合う問題がありません。章や級を変えてみてください。"); return; }
+    if (pool.length === 0) { alert("この条件に合う問題がありません。しぼり込みを変えてみてください。"); return; }
     if ($("shuffle-toggle").checked) pool = shuffle(pool);
 
     session.queue = pool;
@@ -256,6 +301,7 @@
     } else {
       addWrong(q.id);
       if (session.wrongThisRun.indexOf(q.id) === -1) session.wrongThisRun.push(q.id);
+      bumpHist(q.id);
     }
 
     // フィードバック表示
@@ -265,7 +311,14 @@
     $("feedback-head").textContent = isCorrect ? "正解！ 🍻" : "残念… 正解は " + ["A", "B", "C", "D"][correctIdx] + " です";
     $("feedback-exp").textContent = q.explanation || "";
     var srcEl = $("feedback-src");
-    if (srcEl) { srcEl.textContent = q.source ? "参考にした論点: " + q.source : ""; srcEl.hidden = !q.source; }
+    if (srcEl) {
+      var parts = [];
+      if (q.source) parts.push("参考にした論点: " + q.source);
+      var hc = histCount(q.id);
+      if (hc > 0) parts.push("この問題を間違えた回数: " + hc + "回");
+      srcEl.textContent = parts.join("　/　");
+      srcEl.hidden = parts.length === 0;
+    }
 
     // 進捗バーを進める
     $("progress-fill").style.width = ((session.index + 1) / session.queue.length * 100) + "%";

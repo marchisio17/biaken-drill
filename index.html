@@ -50,6 +50,8 @@
         <select id="chapter-select"></select>
         <label for="level-select">級でしぼる</label>
         <select id="level-select"></select>
+        <label for="focus-select">しぼり込み</label>
+        <select id="focus-select"></select>
         <label class="switch-row">
           <input type="checkbox" id="shuffle-toggle" checked />
           <span>問題をシャッフルする</span>
@@ -62,7 +64,7 @@
       </button>
       <button class="btn btn-ghost" id="btn-reset">記録をリセット</button>
 
-      <p class="note">※間違えた問題はこの端末に保存され、復習モードで出題されます。正解すると復習リストから外れます。</p>
+      <p class="note">※間違えた問題はこの端末に保存され、復習モードで出題されます。正解すると復習リストから外れますが、<strong>間違えた回数は残ります</strong>（「一度でも間違えた問題」でいつでも呼び出せます）。</p>
       <p class="appver" id="app-version"></p>
     </section>
 
