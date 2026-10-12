@@ -1,2 +1,5 @@
 .DS_Store
 *.bak.js
+*.bak.html
+*.bak.css
+*_[0-9]*.bak.*
