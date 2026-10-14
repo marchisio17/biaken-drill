@@ -7,7 +7,7 @@
   "use strict";
 
   // ---- アプリのバージョン（更新したらここを上げる） ----
-  var APP_VERSION = "1.6.0";
+  var APP_VERSION = "1.8.0";
 
   // ---- テキストの章タイトル（目次に対応） ----
   var CHAPTERS = {
