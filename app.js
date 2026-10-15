@@ -7,7 +7,7 @@
   "use strict";
 
   // ---- アプリのバージョン（更新したらここを上げる） ----
-  var APP_VERSION = "1.8.0";
+  var APP_VERSION = "1.9.0";
 
   // ---- テキストの章タイトル（目次に対応） ----
   var CHAPTERS = {
@@ -40,7 +40,8 @@
     index: 0,         // 現在位置
     correct: 0,       // セッション内の正解数
     isReview: false,  // 復習モードか
-    wrongThisRun: []  // このセッションで間違えた id
+    wrongThisRun: [], // このセッションで間違えた id
+    mock: null,       // 模擬試験なら { exam: 2|3, endAt: 時刻, timerId, log: [] }
   };
 
   // ---- DOM ヘルパ ----
@@ -97,6 +98,15 @@
     var ids = getWrongIds().filter(function (x) { return x !== id; });
     setWrongIds(ids);
   }
+
+  // ---- 模擬試験 ----
+  // 本番のジャンル別出題数（公式問題集の記載による。毎年おおむね一定）
+  var MOCK_PLAN = {
+    3: { "基本・原料": 15, "製法・スタイル": 20, "歴史": 20, "文化・飲み方": 35, "雑学": 10 },
+    2: { "基本・原料": 15, "製法・スタイル": 20, "歴史": 21, "文化・飲み方": 29, "雑学": 15 }
+  };
+  var MOCK_PASS = { 3: 60, 2: 70 };   // 合格点
+  var MOCK_MINUTES = 60;
 
   // ---- ユーティリティ ----
   function shuffle(arr) {
@@ -206,6 +216,59 @@
     renderQuestion();
   }
 
+  function startMock(exam) {
+    var plan = MOCK_PLAN[exam];
+    var queue = [];
+    var shortfall = [];
+    for (var g in plan) {
+      var bucket = shuffle(ALL.filter(function (q) {
+        return q.exams && q.exams.indexOf(exam) !== -1 && q.genre === g;
+      }));
+      var take = bucket.slice(0, plan[g]);
+      if (take.length < plan[g]) shortfall.push(g + " " + take.length + "/" + plan[g]);
+      queue = queue.concat(take);
+    }
+    if (shortfall.length) {
+      alert("問題が足りないジャンルがあります（" + shortfall.join("・") + "）。足りる分だけで始めます。");
+    }
+
+    session.queue = shuffle(queue);   // 本番はジャンル順ではなくランダム
+    session.index = 0;
+    session.correct = 0;
+    session.isReview = false;
+    session.wrongThisRun = [];
+    session.mock = { exam: exam, endAt: Date.now() + MOCK_MINUTES * 60000, timerId: null, log: [] };
+
+    $("mock-bar").hidden = false;
+    $("mock-label").textContent = "模擬試験　" + exam + "級（" + session.queue.length + "問）";
+    tickMock();
+    session.mock.timerId = setInterval(tickMock, 1000);
+
+    show("screen-quiz");
+    renderQuestion();
+  }
+
+  function tickMock() {
+    if (!session.mock) return;
+    var left = Math.max(0, session.mock.endAt - Date.now());
+    var m = Math.floor(left / 60000), sec = Math.floor(left % 60000 / 1000);
+    var el = $("mock-timer");
+    el.textContent = m + ":" + (sec < 10 ? "0" : "") + sec;
+    el.classList.toggle("warn", left <= 5 * 60000);
+    if (left === 0) { stopMockTimer(); alert("60分が経過しました。ここまでの解答で採点します。"); showResult(); }
+  }
+
+  function abortMock() {
+    if (!session.mock) return;
+    stopMockTimer();
+    session.mock = null;
+  }
+
+  function stopMockTimer() {
+    if (session.mock && session.mock.timerId) { clearInterval(session.mock.timerId); session.mock.timerId = null; }
+    $("mock-bar").hidden = true;
+  }
+
   function startReview() {
     var ids = getWrongIds();
     var pool = [];
@@ -276,6 +339,23 @@
     var q = session.queue[session.index];
     var correctIdx = session.correctDisplayIdx; // シャッフル後の正解位置
     var isCorrect = chosen === correctIdx;
+
+    // 模擬試験は本番と同じく、その場では正誤を見せない（色も付けない）
+    if (session.mock) {
+      var st = getStats();
+      st.answered += 1;
+      if (isCorrect) { st.correct += 1; session.correct += 1; }
+      else {
+        addWrong(q.id);
+        if (session.wrongThisRun.indexOf(q.id) === -1) session.wrongThisRun.push(q.id);
+        bumpHist(q.id);
+      }
+      setStats(st);
+      session.mock.log.push({ id: q.id, correct: isCorrect });
+      if (session.index + 1 >= session.queue.length) showResult();
+      else { session.index++; renderQuestion(); }
+      return;
+    }
 
     // 全選択肢を確定表示
     var buttons = $("choices").querySelectorAll(".choice");
@@ -351,6 +431,45 @@
     $("result-count").textContent = total;
     $("result-emoji").textContent = rate === 100 ? "🏆" : (rate >= 70 ? "🎉" : (rate >= 40 ? "🍺" : "📖"));
 
+    // 模擬試験なら合否とジャンル別を出す
+    var vd = $("result-verdict"), gt = $("result-genre");
+    if (session.mock) {
+      stopMockTimer();
+      var exam = session.mock.exam, pass = MOCK_PASS[exam];
+      var answered = session.mock.log.length;
+      vd.hidden = false;
+      vd.className = "verdict card " + (correct >= pass ? "pass" : "fail");
+      $("verdict-head").textContent = correct >= pass ? "合格ライン到達" : "合格ラインに届かず";
+      $("verdict-sub").textContent =
+        exam + "級の合格は100問中" + pass + "点。今回 " + correct + "点"
+        + (answered < total ? "（" + (total - answered) + "問は未解答）" : "")
+        + "　あと " + Math.max(0, pass - correct) + "点";
+
+      var byGenre = {};
+      for (var i = 0; i < session.queue.length; i++) {
+        var gq = session.queue[i], rec = null;
+        for (var j = 0; j < session.mock.log.length; j++) if (session.mock.log[j].id === gq.id) { rec = session.mock.log[j]; break; }
+        if (!byGenre[gq.genre]) byGenre[gq.genre] = { n: 0, ok: 0 };
+        byGenre[gq.genre].n++;
+        if (rec && rec.correct) byGenre[gq.genre].ok++;
+      }
+      var rows = "";
+      var order = ["基本・原料", "製法・スタイル", "歴史", "文化・飲み方", "雑学"];
+      for (var k = 0; k < order.length; k++) {
+        var g = order[k], d = byGenre[g];
+        if (!d) continue;
+        var pct = Math.round(d.ok / d.n * 100);
+        rows += '<div class="genre-row"><span class="genre-name">' + g + '</span>'
+             +  '<span class="genre-bar"><span class="genre-fill" style="width:' + pct + '%"></span></span>'
+             +  '<span class="genre-num">' + d.ok + "/" + d.n + "</span></div>";
+      }
+      $("genre-rows").innerHTML = rows;
+      gt.hidden = false;
+      session.mock = null;
+    } else {
+      vd.hidden = true; gt.hidden = true;
+    }
+
     // 間違えた問題があれば復習ボタン
     var wrongCount = session.wrongThisRun.length;
     var revBtn = $("btn-result-review");
@@ -402,10 +521,15 @@
     if (ver) ver.textContent = "v" + APP_VERSION + " ・ 全" + ALL.length + "問";
 
     $("btn-start").addEventListener("click", startQuiz);
+    $("btn-mock-3").addEventListener("click", function () { startMock(3); });
+    $("btn-mock-2").addEventListener("click", function () { startMock(2); });
+    $("btn-mock-quit").addEventListener("click", function () {
+      if (confirm("模擬試験を中断します。ここまでの解答で採点しますか？")) { stopMockTimer(); showResult(); }
+    });
     $("btn-review").addEventListener("click", startReview);
     $("btn-reset").addEventListener("click", resetAll);
     $("btn-next").addEventListener("click", nextQuestion);
-    $("btn-quit").addEventListener("click", function () { refreshHome(); show("screen-home"); });
+    $("btn-quit").addEventListener("click", function () { abortMock(); refreshHome(); show("screen-home"); });
     $("btn-again").addEventListener("click", function () { show("screen-home"); refreshHome(); });
     $("btn-home").addEventListener("click", function () { refreshHome(); show("screen-home"); });
     $("btn-result-review").addEventListener("click", startReview);

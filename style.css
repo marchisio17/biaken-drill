@@ -152,6 +152,37 @@ body {
 .feedback-exp { font-size: 15px; color: var(--text); line-height: 1.7; }
 .feedback-src { font-size: 12.5px; color: var(--text-dim); line-height: 1.6; margin: 10px 0 0; }
 
+/* ---- 模擬試験 ---- */
+.btn-mock { background: var(--card); color: var(--text); border: 1px solid var(--beer); }
+.mock-bar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 12px; margin-bottom: 12px;
+  background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+}
+.mock-label { font-size: 13px; font-weight: 700; color: var(--beer); }
+.mock-timer {
+  margin-left: auto; font-size: 20px; font-weight: 800;
+  font-variant-numeric: tabular-nums; letter-spacing: .02em;
+}
+.mock-timer.warn { color: var(--wrong); }
+.mock-quit {
+  font: inherit; font-size: 12px; padding: 4px 10px; cursor: pointer;
+  background: transparent; color: var(--text-dim);
+  border: 1px solid var(--line); border-radius: 999px;
+}
+.verdict { text-align: center; padding: 18px; }
+.verdict-head { font-size: 26px; font-weight: 800; margin: 0; }
+.verdict.pass .verdict-head { color: var(--correct); }
+.verdict.fail .verdict-head { color: var(--wrong); }
+.verdict-sub { font-size: 14px; color: var(--text-dim); margin: 6px 0 0; }
+.genre-table { padding: 16px; }
+.genre-h { font-size: 15px; margin: 0 0 10px; }
+.genre-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 14px; }
+.genre-name { width: 7.5em; flex: none; }
+.genre-bar { flex: 1; height: 8px; background: var(--line); border-radius: 999px; overflow: hidden; }
+.genre-fill { height: 100%; background: var(--beer); }
+.genre-num { width: 4.5em; text-align: right; font-variant-numeric: tabular-nums; color: var(--text-dim); }
+
 /* ---- 結果 ---- */
 .result-score { text-align: center; padding: 26px; }
 .big-rate { font-size: 52px; font-weight: 800; color: var(--beer); line-height: 1; }
