@@ -7,7 +7,7 @@
   "use strict";
 
   // ---- アプリのバージョン（更新したらここを上げる） ----
-  var APP_VERSION = "1.9.0";
+  var APP_VERSION = "1.9.1";
 
   // ---- テキストの章タイトル（目次に対応） ----
   var CHAPTERS = {
@@ -189,6 +189,7 @@
   //  クイズ開始
   // =====================================================================
   function startQuiz() {
+    abortMock();   // 前回の模擬が残っていてもここで切る（バーとタイマーを持ち越さない）
     var chVal = $("chapter-select").value;
     var lvVal = $("level-select").value;
     var focus = $("focus-select") ? $("focus-select").value : "__all__";
@@ -270,6 +271,8 @@
   }
 
   function startReview() {
+    abortMock();
+
     var ids = getWrongIds();
     var pool = [];
     for (var i = 0; i < ids.length; i++) {
